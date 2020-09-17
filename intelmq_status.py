@@ -10,13 +10,10 @@ import subprocess
 
 def intelmq_status():
     out = subprocess.Popen(["intelmqctl","list","queues-and-status"], stdout=subprocess.PIPE)
-    output, err = out.communicate()
+    output = subprocess.check_output(('sort'), stdin=out.stdout)
 
     bot_regex = r"Bot (.*) (.*) (.*)\."
     status_regex = r"Bot (.*) is running\."
-    queue_regex = r"(.*) - ([0-9]*)"
-
-    bot_names=[]
 
     bot_status = []
     output = output.decode("utf-8")
@@ -28,9 +25,18 @@ def intelmq_status():
             continue
         if bot_search:
             temp_bot['botname'] = bot_search.group(1)
-            bot_names.append(temp_bot['botname'])
         else:
+            for bots in bot_status:
+                try:
+                    bot = bots["botname"]
+                    queue_regex = rf"\b(?=\w){bot}\b(?!\w)-(.*) - ([0-9]*)"
+                    queue_search = re.search(queue_regex,line)
+                    if queue_search:
+                        bots[queue_search.group(1)] = queue_search.group(2)
+                except Exception as er:
+                    pass
             continue
+
 
         status_search = re.search(status_regex,line)
         if status_search:
