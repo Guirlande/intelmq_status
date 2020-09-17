@@ -32,7 +32,7 @@ def intelmq_status():
                     queue_regex = rf"\b(?=\w){bot}\b(?!\w)-(.*) - ([0-9]*)"
                     queue_search = re.search(queue_regex,line)
                     if queue_search:
-                        bots[queue_search.group(1)] = queue_search.group(2)
+                        bots[queue_search.group(1)] = int(queue_search.group(2))
                 except Exception as er:
                     pass
             continue
