@@ -14,6 +14,7 @@ def intelmq_status():
 
     bot_regex = r"Bot (.*) (.*) (.*)\."
     status_regex = r"Bot (.*) is running\."
+    queue_regex = r"(.*) - ([0-9]*)"
 
     bot_status = []
     output = output.decode("utf-8")
@@ -33,7 +34,7 @@ def intelmq_status():
                     queue_search = re.search(queue_regex,line)
                     if queue_search:
                         bots[queue_search.group(1)] = int(queue_search.group(2))
-                except Exception as er:
+                except Exception:
                     pass
             continue
 
